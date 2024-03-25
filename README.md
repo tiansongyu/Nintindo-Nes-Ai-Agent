@@ -1,10 +1,10 @@
 # Nintindo-Nes-Ai-Agent
-Nintindo-Nes-Ai-Agent
+本项目目的使用深度强化学习训练任天堂nes游戏，包括完整环境配置，训练过程，查看学习曲线，提供rom。
 
 ## 环境配置
 
 ```bash
-# 创建 conda 环境，将其命名为 StreetFighterAI，Python 版本 3.8.10
+# 创建 conda 环境，将其命名为 Nintindo-Nes-Ai-Agent，Python 版本 3.8.10
 conda create -n Nintindo-Nes-Ai-Agent python=3.8.10
 conda activate Nintindo-Nes-Ai-Agent
 
@@ -32,5 +32,7 @@ tensorboard --logdir=logs/
 
 ## 致谢
 
-本项目使用了 [OpenAI Gym Retro](https://retro.readthedocs.io/en/latest/getting_started.html)、[Stable-Baselines3](https://stable-baselines3.readthedocs.io/en/master/) 等开源代码库。感谢各位程序工作者对开源社区的贡献！
-[linyi street fight ai](https://github.com/linyiLYi/street-fighter-ai)
+本项目使用了 
+- [OpenAI Gym Retro](https://retro.readthedocs.io/en/latest/getting_started.html)
+- [Stable-Baselines3](https://stable-baselines3.readthedocs.io/en/master/) 
+- [linyi street fight ai](https://github.com/linyiLYi/street-fighter-ai)

@@ -21,7 +21,7 @@ from ninja_turtles_fight_wrapper import TeenageMutantNinjaTurtlesTournamentFight
 RESET_ROUND = True  # Whether to reset the round when fight is over. 
 RENDERING = True    # Whether to render the game screen.
 
-MODEL_NAME = r"ppo_ryu_4687500_steps" 
+MODEL_NAME = r"ppo_ninja_turtles_8437500_steps" 
 
 RANDOM_ACTION = False
 NUM_EPISODES = 30 # Make sure NUM_EPISODES >= 3 if you set RESET_ROUND to False to see the whole final stage game.
