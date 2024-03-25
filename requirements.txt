@@ -1,0 +1,7 @@
+setuptools==65.5.0 
+wheel==0.38.4
+gym==0.21.0
+gym-retro==0.8.0
+stable-baselines3==1.7.0
+tensorboard==2.12.1
+pygame
