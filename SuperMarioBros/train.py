@@ -57,7 +57,7 @@ def main():
         device="cuda", 
         verbose=1,
         learning_rate=2.5e-4,
-        buffer_size=500000,
+        buffer_size=50000,
         exploration_fraction=0.1,
         exploration_final_eps=0.02,
         train_freq=4,
@@ -70,7 +70,7 @@ def main():
     save_dir = "trained_models"
     os.makedirs(save_dir, exist_ok=True)
 
-    checkpoint_interval = 500000 # checkpoint_interval * num_envs = total_steps_per_checkpoint
+    checkpoint_interval = 300000 # checkpoint_interval * num_envs = total_steps_per_checkpoint
     checkpoint_callback = CheckpointCallback(save_freq=checkpoint_interval, save_path=save_dir, name_prefix="dqn_super_mario_bros")
 
     # Writing the training logs from stdout to a file
@@ -80,7 +80,7 @@ def main():
         sys.stdout = log_file
     
         model.learn(
-            total_timesteps=int(50000000), # total_timesteps = stage_interval * num_envs * num_stages (1120 rounds)
+            total_timesteps=int(30000000), # total_timesteps = stage_interval * num_envs * num_stages (1120 rounds)
             callback=[checkpoint_callback]#, stage_increase_callback]
         )
         env.close()
