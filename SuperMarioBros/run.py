@@ -21,7 +21,7 @@ from SuperMarioBrosWrapper import SuperMarioBros
 RESET_ROUND = True  # Whether to reset the round when fight is over. 
 RENDERING = True    # Whether to render the game screen.
 
-MODEL_NAME = r"dqn_super_mario_bros_312500_steps" 
+MODEL_NAME = r"dqn_super_mario_bros_300000_steps" 
 
 RANDOM_ACTION = False
 NUM_EPISODES = 30 # Make sure NUM_EPISODES >= 3 if you set RESET_ROUND to False to see the whole final stage game.
@@ -69,19 +69,14 @@ for _ in range(num_episodes):
             obs, reward, done, info = env.step(env.action_space.sample())
         else:
             action, _states = model.predict(obs)
+            print(action)
             obs, reward, done, info = env.step(action)
 
         if reward != 0:
             total_reward += reward
             print("Reward: {:.3f}".format(reward))
-    print("Total reward: {}\n".format(total_reward))
+            print("Total reward: {}\n".format(total_reward))
     episode_reward_sum += total_reward
-
-    if not RESET_ROUND:
-        while info['enemy_health'] < 1 or info['health'] < 1:
-        # Inter scene transition. Do nothing.
-            obs, reward, done, info = env.step([0] * 12)
-            env.render()
 
 env.close()
 print("Winning rate: {}".format(1.0 * num_victory / num_episodes))

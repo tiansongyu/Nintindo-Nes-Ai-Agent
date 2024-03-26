@@ -23,7 +23,7 @@ class SuperMarioBros(gym.Wrapper):
         self.num_frames = 9
         self.frame_stack = collections.deque(maxlen=self.num_frames)
 
-        self.num_step_frames = 1
+        self.num_step_frames = 7
 
         self.reward_coeff = 3.0
 
@@ -64,8 +64,6 @@ class SuperMarioBros(gym.Wrapper):
         for _ in range(self.num_step_frames - 1):
             obs, _reward, _done, info = self.env.step(action)
             self.frame_stack.append(obs[::2, ::2, :])
-            if self.rendering:
-                self.env.render()
 
         self.xscrollLo = info['xscrollLo']
         lives = info['lives']
@@ -94,17 +92,16 @@ class SuperMarioBros(gym.Wrapper):
 
         if self.xscrollLo - self.last_xscrollLo > 0:
             x_roll_reward =self.xscrollLo - self.last_xscrollLo
-
-        if (x_pos - self.last_x_pos > 0) and (x_pos - self.last_x_pos < 5):
-            x_pos_reward = 2 * (x_pos - self.last_x_pos)
+        if x_pos - self.last_x_pos > -5 and x_pos - self.last_x_pos < 5:
+            x_pos_reward = (x_pos - self.last_x_pos) * 2
         if not self.reset_round:
             custom_done = False
         if is_get_flag:
             flag_reward = 50.0
             custom_done = True
 
-        if (time - self.last_time < 0):
-            time_reward = ( time-self.last_time ) * 0.1
+        if time - self.last_time < 0:
+            time_reward = ( time-self.last_time ) * 0.01
         if score - self.last_score > 0:
             score_reward = (score - self.last_score)* 0.001
         if lives < 1:
@@ -113,5 +110,7 @@ class SuperMarioBros(gym.Wrapper):
         self.last_x_pos = x_pos
         self.last_time = time
         self.last_score = score
-        return self._stack_observation(), 0.001 * (score_reward+time_reward+x_roll_reward+x_pos_reward+flag_reward+death_penalty), custom_done, info 
+        r = time_reward+x_roll_reward+x_pos_reward+flag_reward+death_penalty
+        r = np.sign(r) * (np.sqrt(abs(r) + 1) - 1) + 0.001 * r
+        return self._stack_observation(),r, custom_done, info 
     

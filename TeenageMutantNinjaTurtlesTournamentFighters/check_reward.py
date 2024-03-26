@@ -36,7 +36,6 @@ for _ in range(num_episodes):
     while not done:
         timestamp = time.time()
         obs, reward, done, info = env.step(env.action_space.sample())
-
         if reward != 0:
             total_reward += reward
             print("Reward: {}, health: {}, enemy_health:{}".format(reward, info['health'], info['enemy_health']))

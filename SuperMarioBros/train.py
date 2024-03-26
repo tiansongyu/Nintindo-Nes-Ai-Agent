@@ -32,13 +32,13 @@ IsRender = args.IsRender
 LOG_DIR = 'logs'
 os.makedirs(LOG_DIR, exist_ok=True)
 
-def make_env(game, state, seed=0):
+def make_env(game, state, seed=99):
     def _init():
         env = retro.make(
             game=game, 
             state=state, 
             use_restricted_actions=retro.Actions.DISCRETE, 
-            obs_type=retro.Observations.IMAGE    
+            obs_type=retro.Observations.IMAGE
         )
         env = SuperMarioBros(env,True,IsRender)
         env = Monitor(env)
@@ -57,12 +57,12 @@ def main():
         device="cuda", 
         verbose=1,
         learning_rate=2.5e-4,
-        buffer_size=200000,
+        buffer_size=80000,
         exploration_fraction=0.2,
-        exploration_final_eps=0.02,
+        exploration_final_eps=0.01,
         train_freq=2,
-        gradient_steps=4,
-        target_update_interval=500,
+        gradient_steps=1,
+        target_update_interval=1000,
         tensorboard_log="logs",
     )
 

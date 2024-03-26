@@ -69,6 +69,7 @@ for _ in range(num_episodes):
             obs, reward, done, info = env.step(env.action_space.sample())
         else:
             action, _states = model.predict(obs)
+            print(action)
             obs, reward, done, info = env.step(action)
 
         if reward != 0:
