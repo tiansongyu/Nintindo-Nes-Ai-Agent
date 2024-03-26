@@ -14,13 +14,12 @@ import os
 import sys
 
 import retro
-from stable_baselines3 import PPO
+from stable_baselines3 import DQN
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.callbacks import CheckpointCallback
-from stable_baselines3.common.vec_env import SubprocVecEnv
+from stable_baselines3.common.vec_env import DummyVecEnv
 
-from ninja_turtles_fight_wrapper import TeenageMutantNinjaTurtlesTournamentFighters
-
+from SuperMarioBrosWrapper import SuperMarioBros
 import argparse
 
 # Parse command line arguments
@@ -30,32 +29,18 @@ args = parser.parse_args()
 
 IsRender = args.IsRender
 
-NUM_ENV = 30
 LOG_DIR = 'logs'
 os.makedirs(LOG_DIR, exist_ok=True)
-
-# Linear scheduler
-def linear_schedule(initial_value, final_value=0.0):
-
-    if isinstance(initial_value, str):
-        initial_value = float(initial_value)
-        final_value = float(final_value)
-        assert (initial_value > 0.0)
-
-    def scheduler(progress):
-        return final_value + progress * (initial_value - final_value)
-
-    return scheduler
 
 def make_env(game, state, seed=0):
     def _init():
         env = retro.make(
             game=game, 
             state=state, 
-            use_restricted_actions=retro.Actions.FILTERED, 
+            use_restricted_actions=retro.Actions.DISCRETE, 
             obs_type=retro.Observations.IMAGE    
         )
-        env = TeenageMutantNinjaTurtlesTournamentFighters(env,True,IsRender)
+        env = SuperMarioBros(env,True,IsRender)
         env = Monitor(env)
         env.seed(seed)
         return env
@@ -63,33 +48,30 @@ def make_env(game, state, seed=0):
 
 def main():
     # Set up the environment and model
-    game = "TeenageMutantNinjaTurtlesTournamentFighters-Nes"
-    env = SubprocVecEnv([make_env(game, state="Level1.LeoVsRaph.Tournament", seed=i) for i in range(NUM_ENV)])
+    game = "SuperMarioBros-Nes"
+    env = DummyVecEnv([make_env(game, state="Level1-1", seed=0)])
 
-    lr_schedule = linear_schedule(2.5e-4, 2.5e-6)
-
-    clip_range_schedule = linear_schedule(0.15, 0.025)
-
-    model = PPO(
+    model = DQN(
         "CnnPolicy", 
         env,
         device="cuda", 
         verbose=1,
-        n_steps=512,
-        batch_size=512,
-        n_epochs=4,
-        gamma=0.94,
-        learning_rate=lr_schedule,
-        clip_range=clip_range_schedule,
-        tensorboard_log="logs"
+        learning_rate=2.5e-4,
+        buffer_size=500000,
+        exploration_fraction=0.1,
+        exploration_final_eps=0.02,
+        train_freq=4,
+        gradient_steps=1,
+        target_update_interval=1000,
+        tensorboard_log="logs",
     )
 
     # Set the save directory
     save_dir = "trained_models"
     os.makedirs(save_dir, exist_ok=True)
 
-    checkpoint_interval = 31250 # checkpoint_interval * num_envs = total_steps_per_checkpoint
-    checkpoint_callback = CheckpointCallback(save_freq=checkpoint_interval, save_path=save_dir, name_prefix="ppo_ninja_turtle")
+    checkpoint_interval = 500000 # checkpoint_interval * num_envs = total_steps_per_checkpoint
+    checkpoint_callback = CheckpointCallback(save_freq=checkpoint_interval, save_path=save_dir, name_prefix="dqn_super_mario_bros")
 
     # Writing the training logs from stdout to a file
     original_stdout = sys.stdout
@@ -98,7 +80,7 @@ def main():
         sys.stdout = log_file
     
         model.learn(
-            total_timesteps=int(10000000), # total_timesteps = stage_interval * num_envs * num_stages (1120 rounds)
+            total_timesteps=int(50000000), # total_timesteps = stage_interval * num_envs * num_stages (1120 rounds)
             callback=[checkpoint_callback]#, stage_increase_callback]
         )
         env.close()
@@ -107,7 +89,7 @@ def main():
     sys.stdout = original_stdout
 
     # Save the final model
-    model.save(os.path.join(save_dir, "ppo_ninja_turtle_final.zip"))
+    model.save(os.path.join(save_dir, "dqn_SuperMarioBros_final.zip"))
 
 if __name__ == "__main__":
     main()

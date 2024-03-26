@@ -1,6 +1,9 @@
 # Nintindo-Nes-Ai-Agent
 本项目目的使用深度强化学习训练任天堂nes游戏，包括完整环境配置，训练过程，查看学习曲线，提供rom。
 
+## list 
+- 
+
 ## 环境配置
 
 ```bash
@@ -24,7 +27,7 @@ python train.py
 
 ### 查看曲线
 ```bash
-cd [项目上级文件夹]/street-fighter-ai/main
+cd [game_dir]/main
 tensorboard --logdir=logs/
 ```
 在浏览器中打开 Tensorboard 服务默认地址 `http://localhost:6006/`，即可查看训练过程的交互式曲线图。

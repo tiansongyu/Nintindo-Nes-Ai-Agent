@@ -4,7 +4,7 @@ import time
 import retro
 from stable_baselines3.common.monitor import Monitor
 
-from ninja_turtles_fight_wrapper import TeenageMutantNinjaTurtlesTournamentFighters  # Assuming you have this wrapper
+from SuperMarioBrosWrapper import SuperMarioBros  # Assuming you have this wrapper
 
 LOG_DIR = 'logs/'
 os.makedirs(LOG_DIR, exist_ok=True)
@@ -17,12 +17,12 @@ def make_env(game, state):
             use_restricted_actions=retro.Actions.FILTERED, 
             obs_type=retro.Observations.IMAGE
         )
-        env = TeenageMutantNinjaTurtlesTournamentFighters(env)
+        env = SuperMarioBros(env)
         return env
     return _init
 
-game = "TeenageMutantNinjaTurtlesTournamentFighters-Nes"
-state = "Level1.LeoVsRaph.Tournament"
+game = "SuperMarioBros-Nes"
+state = "Level1-1"
 
 env = make_env(game, state)()
 env = Monitor(env, LOG_DIR)
@@ -36,12 +36,12 @@ for _ in range(num_episodes):
     while not done:
         timestamp = time.time()
         obs, reward, done, info = env.step(env.action_space.sample())
-
-        if reward != 0:
-            total_reward += reward
-            print("Reward: {}, health: {}, enemy_health:{}".format(reward, info['health'], info['enemy_health']))
+        total_reward += reward
+        if reward !=0:
+            print("Reward: {}".format(reward))
+            # print("info: {}".format(info))
         env.render()
-        time.sleep(0.01)
+        # time.sleep(0.01)
 
     print("Total reward: {}".format(total_reward))
     episode_reward_sum += total_reward
