@@ -57,12 +57,12 @@ def main():
         device="cuda", 
         verbose=1,
         learning_rate=2.5e-4,
-        buffer_size=50000,
-        exploration_fraction=0.1,
+        buffer_size=200000,
+        exploration_fraction=0.2,
         exploration_final_eps=0.02,
-        train_freq=4,
-        gradient_steps=1,
-        target_update_interval=1000,
+        train_freq=2,
+        gradient_steps=4,
+        target_update_interval=500,
         tensorboard_log="logs",
     )
 
