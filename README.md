@@ -13,7 +13,7 @@ conda activate Nintindo-Nes-Ai-Agent
 
 # 安装 Python 代码库
 pip install setuptools==65.5.0 
-pip install -r ./main/requirements.txt
+pip install -r ./main/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # 运行程序脚本定位 gym-retro 游戏文件夹位置
 python -m retro.import TeenageMutantNinjaTurtlesTournamentFighters-Nes .
