@@ -19,7 +19,7 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.vec_env import SubprocVecEnv
 
-from SuperMarioBrosWrapper import SuperMarioBros
+from FinalMissionWrapper import FinalMission
 
 import argparse
 
@@ -55,7 +55,7 @@ def make_env(game, state, seed=0):
             use_restricted_actions=retro.Actions.FILTERED, 
             obs_type=retro.Observations.IMAGE    
         )
-        env = SuperMarioBros(env,True,IsRender)
+        env = FinalMission(env,True,IsRender)
         env = Monitor(env)
         env.seed(seed)
         return env
@@ -63,8 +63,8 @@ def make_env(game, state, seed=0):
 
 def main():
     # Set up the environment and model
-    game = "SuperMarioBros-Nes"
-    env = SubprocVecEnv([make_env(game, state="Level1-1", seed=i) for i in range(NUM_ENV)])
+    game = "SCATSpecialCyberneticAttackTeam-Nes"
+    env = SubprocVecEnv([make_env(game, state="1Player.Level1", seed=i) for i in range(NUM_ENV)])
 
     lr_schedule = linear_schedule(2.5e-4, 2.5e-6)
 
@@ -89,7 +89,7 @@ def main():
     os.makedirs(save_dir, exist_ok=True)
 
     checkpoint_interval = 15000 # checkpoint_interval * num_envs = total_steps_per_checkpoint
-    checkpoint_callback = CheckpointCallback(save_freq=checkpoint_interval, save_path=save_dir, name_prefix="ppo_supermariobros")
+    checkpoint_callback = CheckpointCallback(save_freq=checkpoint_interval, save_path=save_dir, name_prefix="ppo_FinalMission")
 
     # Writing the training logs from stdout to a file
     original_stdout = sys.stdout
@@ -98,7 +98,7 @@ def main():
         sys.stdout = log_file
     
         model.learn(
-            total_timesteps=int(10000000), # total_timesteps = stage_interval * num_envs * num_stages (1120 rounds)
+            total_timesteps=int(1000000000), # total_timesteps = stage_interval * num_envs * num_stages (1120 rounds)
             callback=[checkpoint_callback]#, stage_increase_callback]
         )
         env.close()
@@ -107,7 +107,7 @@ def main():
     sys.stdout = original_stdout
 
     # Save the final model
-    model.save(os.path.join(save_dir, "ppo_super_mario_bros_final.zip"))
+    model.save(os.path.join(save_dir, "ppo_final_mission_final.zip"))
 
 if __name__ == "__main__":
     main()

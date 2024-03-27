@@ -16,12 +16,12 @@ import time
 import retro
 from stable_baselines3 import PPO
 
-from SuperMarioBrosWrapper import SuperMarioBros
+from FinalMissionWrapper import FinalMission
 
 RESET_ROUND = True  # Whether to reset the round when fight is over. 
 RENDERING = True    # Whether to render the game screen.
 
-MODEL_NAME = r"ppo_supermariobros_4000000_steps" 
+MODEL_NAME = r"ppo_FinalMission_9600000_steps" 
 
 RANDOM_ACTION = False
 NUM_EPISODES = 30 # Make sure NUM_EPISODES >= 3 if you set RESET_ROUND to False to see the whole final stage game.
@@ -35,12 +35,12 @@ def make_env(game, state):
             use_restricted_actions=retro.Actions.FILTERED,
             obs_type=retro.Observations.IMAGE
         )
-        env = SuperMarioBros(env, reset_round=RESET_ROUND, rendering=RENDERING)
+        env = FinalMission(env, reset_round=RESET_ROUND, rendering=RENDERING)
         return env
     return _init
 
-game = "SuperMarioBros-Nes"
-env = make_env(game, state="Level1-1")()
+game = "SCATSpecialCyberneticAttackTeam-Nes"
+env = make_env(game, state="1Player.Level1")()
 
 if not RANDOM_ACTION:
     model = PPO.load(os.path.join(MODEL_DIR, MODEL_NAME), env=env)
@@ -67,13 +67,12 @@ for _ in range(num_episodes):
             obs, reward, done, info = env.step(env.action_space.sample())
         else:
             action, _states = model.predict(obs)
-            print(action)
             obs, reward, done, info = env.step(action)
 
         if reward != 0:
             total_reward += reward
-            print("Reward: {:.3f}".format(reward))
-            print("Total reward: {}\n".format(total_reward))
+            # print("Reward: {:.3f}".format(reward))
+            # print("Total reward: {}\n".format(total_reward))
         if done:
             print("Victory!")
             num_victory += 1

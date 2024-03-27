@@ -4,10 +4,13 @@ import time
 import retro
 from stable_baselines3.common.monitor import Monitor
 
-from SuperMarioBrosWrapper import SuperMarioBros  # Assuming you have this wrapper
+from FinalMissionWrapper import FinalMission  # Assuming you have this wrapper
 
 LOG_DIR = 'logs/'
 os.makedirs(LOG_DIR, exist_ok=True)
+
+RESET_ROUND = True  # Whether to reset the round when fight is over. 
+RENDERING = True    # Whether to render the game screen.
 
 def make_env(game, state):
     def _init():
@@ -17,12 +20,12 @@ def make_env(game, state):
             use_restricted_actions=retro.Actions.FILTERED, 
             obs_type=retro.Observations.IMAGE
         )
-        env = SuperMarioBros(env)
+        env = FinalMission(env,RESET_ROUND,RENDERING)
         return env
     return _init
 
-game = "SuperMarioBros-Nes"
-state = "Level1-1"
+game = "SCATSpecialCyberneticAttackTeam-Nes"
+state = "1Player.Level1"
 
 env = make_env(game, state)()
 env = Monitor(env, LOG_DIR)
@@ -39,8 +42,6 @@ for _ in range(num_episodes):
         if reward != 0:
             total_reward += reward
             print("Total reward: {}".format(total_reward))
-        env.render()
-        time.sleep(0.01)
 
     print("Total reward: {}".format(total_reward))
     episode_reward_sum += total_reward
