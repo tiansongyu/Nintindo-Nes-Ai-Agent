@@ -2,7 +2,9 @@
 本项目目的使用深度强化学习训练任天堂nes游戏，包括完整环境配置，训练过程，查看学习曲线，提供rom。
 
 ## list 
-- 
+- SuperMarioBros
+- TeenageMutantNinjaTurtlesTournamentFighters
+- FinalMission
 
 ## 环境配置
 
