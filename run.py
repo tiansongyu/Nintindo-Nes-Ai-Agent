@@ -40,6 +40,7 @@ else:
 RESET_ROUND = True  # Whether to reset the round when fight is over. 
 RENDERING = True    # Whether to render the game screen.
 
+# use your trained model !!!!!!!!!!!!!!!
 MODEL_NAME = r"ppo_FinalMission_9600000_steps" 
 
 RANDOM_ACTION = False
