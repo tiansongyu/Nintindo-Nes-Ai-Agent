@@ -41,6 +41,13 @@ tensorboard --logdir=logs/
 ```bash
 python run.py 1 
 ```
+
+### 示例图片
+
+![SuperMarioBros](img/supermaiobros_nes.gif)
+![NinjaTurtles](img/nijia_turtles_nes.gif)
+![FinalMission](img/final_mission_nes.gif)
+
 ## 致谢
 
 本项目使用了 
