@@ -61,8 +61,8 @@ class FinalMission(gym.Wrapper):
             if self.rendering:
                 self.env.render()
                 ti.sleep(0.01)
-        lives = info['health']
-        scores = info['score']
+        lives = info['lives']
+        scores = info['scores']
 
         if(self.last_scores < scores):
             reward_scores = (scores - self.last_scores) * 2

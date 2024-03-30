@@ -19,3 +19,4 @@ for target_game_dir, game_dir in game_dirs_mapping.items():
     print(os.path.join(retro_directory, 'data', 'stable', game_dir))
     print(rom_directory)
     print(target_game_dir)
+print("finish set up environment")
