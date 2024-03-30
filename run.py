@@ -15,6 +15,7 @@ import time
 import sys
 import retro
 import argparse
+import re
 
 from stable_baselines3 import PPO
 from stable_baselines3.common.monitor import Monitor
@@ -40,13 +41,24 @@ else:
 RESET_ROUND = True  # Whether to reset the round when fight is over. 
 RENDERING = True    # Whether to render the game screen.
 
-# use your trained model !!!!!!!!!!!!!!!
-MODEL_NAME = r"ppo_FinalMission_9600000_steps" 
 
 RANDOM_ACTION = False
 NUM_EPISODES = 30 # Make sure NUM_EPISODES >= 3 if you set RESET_ROUND to False to see the whole final stage game.
 MODEL_DIR = r"trained_models/"
+def get_max_number(game):
+    max_number = -1
+    pattern = re.compile(f"ppo_{game}_(\d+)_steps")
 
+    for filename in os.listdir(MODEL_DIR):
+        match = pattern.match(filename)
+        if match:
+            number = int(match.group(1))
+            if number > max_number:
+                max_number = number
+    return max_number
+# use your trained model !!!!!!!!!!!!!!!
+MODEL_NAME = "ppo_"+ game + "_" + str(get_max_number(game)) +"_steps"
+print(MODEL_NAME)
 def make_env(game, state):
     def _init():
         env = retro.make(
