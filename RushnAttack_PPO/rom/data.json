@@ -7,6 +7,19 @@
     "score": {
       "address": 2020,
       "type": "<d4"
+    },
+    "xscrollLo": {
+        "address": 49,
+        "type": "|u1"
+    }
+    ,
+    "xscrollHi": {
+        "address": 50,
+        "type": "|u1"
+    },
+    "x_pos_in_screen": {
+        "address": 816,
+        "type": "|u1"
     }
   }
 }

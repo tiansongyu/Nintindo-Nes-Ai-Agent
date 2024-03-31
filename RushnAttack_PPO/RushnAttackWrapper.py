@@ -29,7 +29,8 @@ class RushnAttack(gym.Wrapper):
 
         self.last_lives = 6
         self.last_scores = 0
-
+        self.last_xscoll = 0
+        self.last_x_pos = 0
         self.observation_space = gym.spaces.Box(low=0, high=255, shape=(112, 120, 3), dtype=np.uint8)
         self.reset_round = reset_round
         self.rendering = rendering
@@ -38,7 +39,8 @@ class RushnAttack(gym.Wrapper):
     def reset(self):
         self.last_score = 0
         self.last_lives = 0
-
+        self.last_xscoll = 0
+        self.last_x_pos = 0
         observation = self.env.reset()
         
         self.frame_stack.clear()
@@ -51,7 +53,8 @@ class RushnAttack(gym.Wrapper):
 
         reward_scores = 0
         reward_lives = 0
-
+        reward_xscroll = 0
+        reward_x_pos = 0
         obs, _reward, _done, info = self.env.step(action)
         self.frame_stack.append(obs[::2, ::2, :])
         for _ in range(self.num_step_frames - 1):
@@ -63,18 +66,23 @@ class RushnAttack(gym.Wrapper):
                 ti.sleep(0.01)
         lives = info['lives']
         scores = info['score']
-
+        xscollLo = info['xscrollLo']
+        xscrollHi = info['xscrollHi']
+        x_pos_in_screen = info['x_pos_in_screen']
+        xscroll =(xscollLo + xscrollHi * 256) 
         if(self.last_scores < scores):
-            reward_scores = (scores - self.last_scores) * 2
+            reward_scores = (scores - self.last_scores) * 0.001
         if(self.last_lives > lives):
-            reward_lives = -100
+            reward_lives = -80
             custom_done = True
+        if(self.last_xscoll < xscroll):
+            reward_xscroll = (xscroll - self.last_xscoll) * 10
+            reward_x_pos = (x_pos_in_screen - self.last_x_pos) * 10
         if(lives < 1):
             custom_done = True
         self.last_scores = scores
         self.last_lives = lives
-        print(reward_lives)
-        print(reward_scores)
-        r = 0.01 * (reward_lives + reward_scores )
+        r = 0.01 * (reward_lives + reward_scores + reward_xscroll)
+        print("Reward: ", r, "Scores: ", scores, "Lives: ", lives, "Xscroll: ", xscroll, "X_pos: ", x_pos_in_screen)
         return self._stack_observation(),r, custom_done, info 
     
