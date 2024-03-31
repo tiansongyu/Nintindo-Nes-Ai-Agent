@@ -21,9 +21,7 @@ from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.vec_env import SubprocVecEnv
 import argparse
 
-NUM_ENV = 40
-LOG_DIR = 'logs'
-os.makedirs(LOG_DIR, exist_ok=True)
+NUM_ENV = 10
 
 # Linear scheduler
 def linear_schedule(initial_value, final_value=0.0):
@@ -54,6 +52,9 @@ else:
     GameWrapper = game_info["wrapper"]
     game = game_info["game"]
     state = game_info["state"]
+
+LOG_DIR = 'logs'
+os.makedirs(LOG_DIR + "/" + game, exist_ok=True)
 
 def make_env(game, state, seed=0):
     def _init():
@@ -87,7 +88,7 @@ def main():
         gamma=0.94,
         learning_rate=lr_schedule,
         clip_range=clip_range_schedule,
-        tensorboard_log="logs"
+        tensorboard_log=LOG_DIR + "/" + game
     )
 
     # Set the save directory

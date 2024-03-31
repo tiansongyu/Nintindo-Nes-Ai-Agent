@@ -74,15 +74,14 @@ class RushnAttack(gym.Wrapper):
             reward_scores = (scores - self.last_scores) * 0.001
         if(self.last_lives > lives):
             reward_lives = -80
-            custom_done = True
         if(self.last_xscoll < xscroll):
             reward_xscroll = (xscroll - self.last_xscoll) * 10
-            reward_x_pos = (x_pos_in_screen - self.last_x_pos) * 10
+        reward_x_pos = (x_pos_in_screen - self.last_x_pos) * 10
         if(lives < 1):
             custom_done = True
         self.last_scores = scores
         self.last_lives = lives
-        r = 0.01 * (reward_lives + reward_scores + reward_xscroll)
+        r = 0.01 * (reward_lives + reward_scores + reward_xscroll + reward_x_pos)
         # print("Reward: ", r, "Scores: ", scores, "Lives: ", lives, "Xscroll: ", xscroll, "X_pos: ", x_pos_in_screen)
         return self._stack_observation(),r, custom_done, info 
     
