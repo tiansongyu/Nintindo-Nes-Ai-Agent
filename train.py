@@ -105,7 +105,7 @@ def main():
         sys.stdout = log_file
     
         model.learn(
-            total_timesteps=int(1000000000), # total_timesteps = stage_interval * num_envs * num_stages (1120 rounds)
+            total_timesteps=int(10000000), # total_timesteps = stage_interval * num_envs * num_stages (1120 rounds)
             callback=[checkpoint_callback]#, stage_increase_callback]
         )
         env.close()
