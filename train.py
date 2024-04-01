@@ -21,7 +21,7 @@ from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.vec_env import SubprocVecEnv
 import argparse
 
-NUM_ENV = 10
+NUM_ENV = 40
 
 # Linear scheduler
 def linear_schedule(initial_value, final_value=0.0):
