@@ -10,7 +10,7 @@
 | 3 | FinalMission(SCATSpecialCyberneticAttackTeam) |
 | 4 | RushnAttack |
 
-## 环境配置
+## 环境配置(windows or linux)
 
 ```bash
 # 创建 conda 环境，将其命名为 Nintindo-Nes-Ai-Agent，Python 版本 3.8.10
