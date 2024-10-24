@@ -23,7 +23,6 @@ import argparse
 
 NUM_ENV = 40
 
-# Linear scheduler
 def linear_schedule(initial_value, final_value=0.0):
 
     if isinstance(initial_value, str):
@@ -90,30 +89,24 @@ def main():
         clip_range=clip_range_schedule,
         tensorboard_log=LOG_DIR + "/" + game
     )
-
-    # Set the save directory
     save_dir = "trained_models"
     os.makedirs(save_dir, exist_ok=True)
 
     checkpoint_interval = 15000 # checkpoint_interval * num_envs = total_steps_per_checkpoint
     checkpoint_callback = CheckpointCallback(save_freq=checkpoint_interval, save_path=save_dir, name_prefix="ppo_"+game)
 
-    # Writing the training logs from stdout to a file
     original_stdout = sys.stdout
     log_file_path = os.path.join(save_dir, "training_log.txt")
     with open(log_file_path, 'w') as log_file:
         sys.stdout = log_file
     
         model.learn(
-            total_timesteps=int(50000000), # total_timesteps = stage_interval * num_envs * num_stages (1120 rounds)
-            callback=[checkpoint_callback]#, stage_increase_callback]
+            total_timesteps=int(50000000),
+            callback=[checkpoint_callback]
         )
         env.close()
 
-    # Restore stdout
     sys.stdout = original_stdout
-
-    # Save the final model
     model.save(os.path.join(save_dir, "ppo_" + game + ".zip"))
 
 if __name__ == "__main__":

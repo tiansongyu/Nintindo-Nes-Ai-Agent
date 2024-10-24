@@ -38,12 +38,12 @@ else:
     game = game_info["game"]
     state = game_info["state"]
 
-RESET_ROUND = True  # Whether to reset the round when fight is over. 
-RENDERING = True    # Whether to render the game screen.
+RESET_ROUND = True  
+RENDERING = True   
 
 
 RANDOM_ACTION = False
-NUM_EPISODES = 30 # Make sure NUM_EPISODES >= 3 if you set RESET_ROUND to False to see the whole final stage game.
+NUM_EPISODES = 30
 MODEL_DIR = r"trained_models/"
 def get_max_number(game):
     max_number = -1
