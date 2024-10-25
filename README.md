@@ -1,5 +1,6 @@
 # Nintindo-Nes-Ai-Agent
-[English](https://github.com/tiansongyu/Nintindo-Nes-Ai-Agent/blob/main/README_en.md)|[中文](https://github.com/tiansongyu/Nintindo-Nes-Ai-Agent/blob/main/README.md)|
+[English](https://github.com/tiansongyu/Nintindo-Nes-Ai-Agent/blob/main/README_en.md)|[中文](https://github.com/tiansongyu/Nintindo-Nes-Ai-Agent/blob/main/README.md)
+
 本项目目的使用深度强化学习训练任天堂nes游戏，包括完整环境配置，训练过程，查看学习曲线，提供rom。
 
 ## List of Games
