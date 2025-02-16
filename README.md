@@ -12,7 +12,7 @@
 | 3 | FinalMission(SCATSpecialCyberneticAttackTeam) |
 | 4 | RushnAttack |
 
-## 环境配置(windows linux mac)
+## 环境配置(windows linux mac),所有命令一行一行执行
 
 ```bash
 # 安装conda
