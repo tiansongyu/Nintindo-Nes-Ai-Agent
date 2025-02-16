@@ -25,7 +25,7 @@ conda activate Nintindo-Nes-Ai-Agent
 
 cd Nintindo-Nes-Ai-Agent
 # 安装 Python 代码库
-python  -m pip install pip==24.0.0
+python -m pip install --upgrade pip==24.0
 pip install setuptools==65.5.0 wheel==0.38.4 -i https://pypi.tuna.tsinghua.edu.cn/simple
 pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
