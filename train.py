@@ -12,6 +12,7 @@
 
 import os
 import sys
+import argparse
 from common import get_game_info
 import time
 
@@ -20,11 +21,14 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.vec_env import SubprocVecEnv
-import argparse
 
-from RushnAttackWrapper import RushnAttack  # 导入自定义的环境包装器
+# 从各个游戏包装器导入
+from RushnAttackWrapper import RushnAttack
+from SuperMarioBrosWrapper import SuperMarioBros
+from FinalMissionWrapper import FinalMission
+from ninja_turtles_fight_wrapper import TeenageMutantNinjaTurtlesTournamentFighters
 
-NUM_ENV = 40  # 定义并行环境的数量
+NUM_ENV = 5  # 定义并行环境的数量
 
 # 线性调度函数，用于动态调整学习率和剪切范围
 def linear_schedule(initial_value, final_value=0.0):
@@ -41,27 +45,28 @@ def linear_schedule(initial_value, final_value=0.0):
 # 解析命令行参数
 parser = argparse.ArgumentParser(description='Training parameters')
 parser.add_argument('game_number', help='The number of the game to train.')
-parser.add_argument('--IsRender', type=bool, default=False, help='Whether to render the environment')
+parser.add_argument('--IsRender', type=bool, default=True, help='Whether to render the environment')
 
 args = parser.parse_args()
 IsRender = args.IsRender  # 获取渲染选项
 
 # 获取游戏信息
-game_info = get_game_info(args.game_number)
+game_info = get_game_info(args.game_number)  # 根据输入的数字获取游戏信息
 
 if game_info is None:
     print(f"Invalid game number. Please choose from {', '.join(game_mapping.keys())}.")
-else:
-    GameWrapper = game_info["wrapper"]  # 获取游戏包装器
-    game = game_info["game"]  # 获取游戏名称
-    state = game_info["state"]  # 获取游戏状态
+    sys.exit(1)
+
+GameWrapper = game_info["wrapper"]  # 获取游戏包装器
+game = game_info["game"]  # 获取游戏名称
+state = game_info["state"]  # 获取游戏状态
 
 LOG_DIR = 'logs'  # 定义日志目录
 os.makedirs(LOG_DIR + "/" + game, exist_ok=True)  # 创建日志目录
 
 # 设置重置回合和渲染选项
 RESET_ROUND = True  # 是否在战斗结束时重置回合
-RENDERING = True    # 是否渲染游戏画面
+RENDERING = IsRender  # 是否渲染游戏画面
 
 # 创建环境的工厂函数
 def make_env(game, state, seed=0):
@@ -73,8 +78,8 @@ def make_env(game, state, seed=0):
             use_restricted_actions=retro.Actions.FILTERED, 
             obs_type=retro.Observations.IMAGE
         )
-        # 使用 RushnAttack 包装环境
-        env = RushnAttack(env, RESET_ROUND, RENDERING)
+        # 使用对应的游戏包装器
+        env = GameWrapper(env, RESET_ROUND, RENDERING)
         env = Monitor(env)  # 监控环境
         env.seed(seed)  # 设置随机种子
         return env

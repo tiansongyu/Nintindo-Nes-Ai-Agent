@@ -22,10 +22,10 @@ from SuperMarioBrosWrapper import SuperMarioBros
 from ninja_turtles_fight_wrapper import TeenageMutantNinjaTurtlesTournamentFighters
 
 game_mapping = {
-    "3": {"wrapper": FinalMission, "game": "SCATSpecialCyberneticAttackTeam-Nes", "state": "1Player.Level1"},
     "1": {"wrapper": SuperMarioBros, "game": "SuperMarioBros-Nes", "state": "Level1-1"},
-    "4": {"wrapper": RushnAttack, "game": "RushnAttack-Nes", "state": "1Player.Level1"},
-    "2": {"wrapper": TeenageMutantNinjaTurtlesTournamentFighters, "game": "TeenageMutantNinjaTurtlesTournamentFighters-Nes", "state": "Level1.LeoVsRaph.Tournament"}
+    "2": {"wrapper": TeenageMutantNinjaTurtlesTournamentFighters, "game": "TeenageMutantNinjaTurtlesTournamentFighters-Nes", "state": "Level1.LeoVsRaph.Tournament"},
+    "3": {"wrapper": FinalMission, "game": "SCATSpecialCyberneticAttackTeam-Nes", "state": "1Player.Level1"},
+    "4": {"wrapper": RushnAttack, "game": "RushnAttack-Nes", "state": "1Player.Level1"}
 }
 
 def get_game_info(game_number):

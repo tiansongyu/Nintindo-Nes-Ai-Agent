@@ -26,7 +26,7 @@ from common import get_game_info
 
 parser = argparse.ArgumentParser(description='Training parameters')
 parser.add_argument('game_number', help='The number of the game to train.')
-parser.add_argument('--IsRender', type=bool, default=False, help='Whether to render the environment')
+parser.add_argument('--IsRender', type=bool, default=True, help='Whether to render the environment')
 
 args = parser.parse_args()
 game_info = get_game_info(args.game_number)
@@ -39,8 +39,7 @@ else:
     state = game_info["state"]
 
 RESET_ROUND = True  
-RENDERING = True   
-
+RENDERING = args.IsRender  # 使用命令行参数中的渲染选项
 
 RANDOM_ACTION = False
 NUM_EPISODES = 30
@@ -103,10 +102,10 @@ for _ in range(num_episodes):
         if reward != 0:
             total_reward += reward
             print("Reward: {:.3f}".format(reward))
-            print("Total reward: {}\n".format(total_reward))
+            print("Total reward: {}".format(total_reward))
         if done:
             num_victory += 1
-    print("Total reward: {}\n".format(total_reward))
+    print("Total reward: {}".format(total_reward))
     episode_reward_sum += total_reward
 
 env.close()
