@@ -16,7 +16,7 @@
 
 ```bash
 # 安装conda
-[https://docs.anaconda.com/miniconda/](https://www.anaconda.com/download/success#miniconda)
+https://www.anaconda.com/download/success#miniconda
 # 下载代码
 git clone git@github.com:tiansongyu/Nintindo-Nes-Ai-Agent.git
 # 创建 conda 环境，将其命名为 Nintindo-Nes-Ai-Agent，Python 版本 3.8.10
