@@ -28,10 +28,10 @@ from SuperMarioBrosWrapper import SuperMarioBros
 from FinalMissionWrapper import FinalMission
 from ninja_turtles_fight_wrapper import TeenageMutantNinjaTurtlesTournamentFighters
 
-NUM_ENV = 5  # 定义并行环境的数量
+NUM_ENV = 30  # 定义并行环境的数量
 
-# 线性调度函数，用于动态调整学习率和剪切范围
 def linear_schedule(initial_value, final_value=0.0):
+    """线性调度函数，用于动态调整学习率和剪切范围"""
     if isinstance(initial_value, str):
         initial_value = float(initial_value)
         final_value = float(final_value)
@@ -42,55 +42,42 @@ def linear_schedule(initial_value, final_value=0.0):
 
     return scheduler
 
-# 解析命令行参数
-parser = argparse.ArgumentParser(description='Training parameters')
-parser.add_argument('game_number', help='The number of the game to train.')
-parser.add_argument('--IsRender', type=bool, default=True, help='Whether to render the environment')
-
-args = parser.parse_args()
-IsRender = args.IsRender  # 获取渲染选项
-
-# 获取游戏信息
-game_info = get_game_info(args.game_number)  # 根据输入的数字获取游戏信息
-
-if game_info is None:
-    print(f"Invalid game number. Please choose from {', '.join(game_mapping.keys())}.")
-    sys.exit(1)
-
-GameWrapper = game_info["wrapper"]  # 获取游戏包装器
-game = game_info["game"]  # 获取游戏名称
-state = game_info["state"]  # 获取游戏状态
-
-LOG_DIR = 'logs'  # 定义日志目录
-os.makedirs(LOG_DIR + "/" + game, exist_ok=True)  # 创建日志目录
-
-# 设置重置回合和渲染选项
-RESET_ROUND = True  # 是否在战斗结束时重置回合
-RENDERING = IsRender  # 是否渲染游戏画面
-
-# 创建环境的工厂函数
-def make_env(game, state, seed=0):
+def create_env(game_info, reset_round, rendering):
+    """创建环境的工厂函数"""
     def _init():
-        # 创建 retro 环境
         env = retro.make(
-            game=game, 
-            state=state, 
+            game=game_info["game"], 
+            state=game_info["state"], 
             use_restricted_actions=retro.Actions.FILTERED, 
             obs_type=retro.Observations.IMAGE
         )
-        # 使用对应的游戏包装器
-        env = GameWrapper(env, RESET_ROUND, RENDERING)
+        env = game_info["wrapper"](env, reset_round, rendering)
         env = Monitor(env)  # 监控环境
-        env.seed(seed)  # 设置随机种子
         return env
     return _init
 
-# 主训练函数
 def main():
-    # 创建多个并行环境
-    env = SubprocVecEnv([make_env(game, state, seed=i) for i in range(NUM_ENV)])
-    lr_schedule = linear_schedule(2.5e-4, 2.5e-6)  # 学习率调度
+    # 解析命令行参数
+    parser = argparse.ArgumentParser(description='Training parameters')
+    parser.add_argument('game_number', help='The number of the game to train.')
+    parser.add_argument('--IsRender', type=bool, default=True, help='Whether to render the environment')
 
+    args = parser.parse_args()
+    IsRender = args.IsRender  # 获取渲染选项
+
+    # 获取游戏信息
+    game_info = get_game_info(args.game_number)  # 根据输入的数字获取游戏信息
+
+    LOG_DIR = 'logs'  # 定义日志目录
+    os.makedirs(LOG_DIR + "/" + game_info["game"], exist_ok=True)  # 创建日志目录
+
+    # 设置重置回合和渲染选项
+    RESET_ROUND = True  # 是否在战斗结束时重置回合
+    RENDERING = IsRender  # 是否渲染游戏画面
+
+    # 创建多个并行环境
+    env = SubprocVecEnv([create_env(game_info, RESET_ROUND, RENDERING) for _ in range(NUM_ENV)])
+    lr_schedule = linear_schedule(2.5e-4, 2.5e-6)  # 学习率调度
     clip_range_schedule = linear_schedule(0.15, 0.025)  # 剪切范围调度
 
     # 创建 PPO 模型
@@ -105,13 +92,14 @@ def main():
         gamma=0.94,  # 折扣因子
         learning_rate=lr_schedule,  # 学习率
         clip_range=clip_range_schedule,  # 剪切范围
-        tensorboard_log=LOG_DIR + "/" + game  # TensorBoard 日志
+        tensorboard_log=LOG_DIR + "/" + game_info["game"]  # TensorBoard 日志
     )
+    
     save_dir = "trained_models"  # 定义模型保存目录
     os.makedirs(save_dir, exist_ok=True)  # 创建保存目录
 
     checkpoint_interval = 15000  # 检查点间隔
-    checkpoint_callback = CheckpointCallback(save_freq=checkpoint_interval, save_path=save_dir, name_prefix="ppo_"+game)  # 创建检查点回调
+    checkpoint_callback = CheckpointCallback(save_freq=checkpoint_interval, save_path=save_dir, name_prefix="ppo_"+game_info["game"])  # 创建检查点回调
 
     original_stdout = sys.stdout  # 保存原始标准输出
     log_file_path = os.path.join(save_dir, "training_log.txt")  # 定义日志文件路径
@@ -126,7 +114,7 @@ def main():
         env.close()  # 关闭环境
 
     sys.stdout = original_stdout  # 恢复标准输出
-    model.save(os.path.join(save_dir, "ppo_" + game + ".zip"))  # 保存模型
+    model.save(os.path.join(save_dir, "ppo_" + game_info["game"] + ".zip"))  # 保存模型
 
 if __name__ == "__main__":
     main()  # 运行主函数

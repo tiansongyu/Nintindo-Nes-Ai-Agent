@@ -13,14 +13,17 @@
 import sys
 import os
 
+# 动态添加路径
 for root, dirs, files in os.walk('.'):
     sys.path.append(root)
 
+# 导入游戏包装器
 from FinalMissionWrapper import FinalMission
 from RushnAttackWrapper import RushnAttack
 from SuperMarioBrosWrapper import SuperMarioBros
 from ninja_turtles_fight_wrapper import TeenageMutantNinjaTurtlesTournamentFighters
 
+# 游戏映射
 game_mapping = {
     "1": {"wrapper": SuperMarioBros, "game": "SuperMarioBros-Nes", "state": "Level1-1"},
     "2": {"wrapper": TeenageMutantNinjaTurtlesTournamentFighters, "game": "TeenageMutantNinjaTurtlesTournamentFighters-Nes", "state": "Level1.LeoVsRaph.Tournament"},
@@ -29,6 +32,7 @@ game_mapping = {
 }
 
 def get_game_info(game_number):
+    """根据游戏编号获取游戏信息"""
     game_info = game_mapping.get(game_number)
 
     if game_info is None:
