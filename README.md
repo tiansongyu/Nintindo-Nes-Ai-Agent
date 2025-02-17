@@ -32,10 +32,17 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 # 运行程序脚本定位 gym-retro 游戏文件夹位置
 python set_up.py
 ```
+
+### 查看训练结果
+
+```bash
+python run.py 1 
+```
+
 ### 训练模型
 
 ```bash
-python train.py 1 
+python train.py 1 --IsRender True
 ```
 
 ### 查看曲线
@@ -43,12 +50,6 @@ python train.py 1
 tensorboard --logdir=logs/
 ```
 在浏览器中打开 Tensorboard 服务默认地址 `http://localhost:6006/`，即可查看训练过程的交互式曲线图。
-
-### 查看训练结果
-
-```bash
-python run.py 1 
-```
 
 ### 示例图片
 
