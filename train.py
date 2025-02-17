@@ -60,7 +60,7 @@ def main():
     # 解析命令行参数
     parser = argparse.ArgumentParser(description='Training parameters')
     parser.add_argument('game_number', help='The number of the game to train.')
-    parser.add_argument('c', type=bool, default=False, help='Whether to render the environment')
+    parser.add_argument('--IsRender', type=bool, default=False, help='Whether to render the environment')
 
     args = parser.parse_args()
     IsRender = args.IsRender  # 获取渲染选项
