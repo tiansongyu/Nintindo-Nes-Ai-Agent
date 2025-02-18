@@ -17,8 +17,8 @@
 ```bash
 # 安装nvidia驱动
 https://www.nvidia.cn/geforce/drivers/
-# 安装cuda + cuDNN(注意版本对应关系）
-https://developer.nvidia.com/cuda-toolkit-archive
+# 安装cuda + cuDNN(注意版本对应关系）cuda 使用的是11.8
+https://developer.nvidia.com/cuda-toolkit-archive # cuda 使用的是11.8
 https://developer.nvidia.com/rdp/cudnn-archive
 # 查看pytorch 和 cuda对应的版本
 https://pytorch.org/get-started/previous-versions/
