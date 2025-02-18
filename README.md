@@ -36,6 +36,7 @@ cd Nintindo-Nes-Ai-Agent
 python -m pip install --upgrade pip==24.0 -i https://pypi.tuna.tsinghua.edu.cn/simple
 pip install setuptools==65.5.0 wheel==0.38.4 -i https://pypi.tuna.tsinghua.edu.cn/simple
 pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+conda install pytorch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1  pytorch-cuda=11.8 -c pytorch -c nvidia
 
 # 运行程序脚本定位 gym-retro 游戏文件夹位置
 python set_up.py
