@@ -5,3 +5,7 @@ gym-retro==0.8.0
 stable-baselines3==1.7.0
 tensorboard==2.12.1
 pygame
+pytorch==2.4.1 
+torchvision==0.19.1 
+torchaudio==2.4.1  
+pytorch-cuda=11.8
