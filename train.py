@@ -28,7 +28,7 @@ from SuperMarioBrosWrapper import SuperMarioBros
 from FinalMissionWrapper import FinalMission
 from ninja_turtles_fight_wrapper import TeenageMutantNinjaTurtlesTournamentFighters
 
-NUM_ENV = 30  # 定义并行环境的数量
+NUM_ENV = 10  # 定义并行环境的数量
 
 def linear_schedule(initial_value, final_value=0.0):
     """线性调度函数，用于动态调整学习率和剪切范围"""
