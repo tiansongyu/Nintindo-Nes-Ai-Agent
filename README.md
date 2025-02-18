@@ -15,6 +15,13 @@
 ## 环境配置(windows linux mac),所有命令一行一行执行
 
 ```bash
+# 安装nvidia驱动
+https://www.nvidia.cn/geforce/drivers/
+# 安装cuda + cuDNN(注意版本对应关系）
+https://developer.nvidia.com/cuda-toolkit-archive
+https://developer.nvidia.com/rdp/cudnn-archive
+## 
+
 # 安装conda
 https://www.anaconda.com/download/success#miniconda
 # 下载代码
