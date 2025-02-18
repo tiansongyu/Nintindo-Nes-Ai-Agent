@@ -20,7 +20,8 @@ https://www.nvidia.cn/geforce/drivers/
 # 安装cuda + cuDNN(注意版本对应关系）
 https://developer.nvidia.com/cuda-toolkit-archive
 https://developer.nvidia.com/rdp/cudnn-archive
-## 
+# 查看pytorch 和 cuda对应的版本
+https://pytorch.org/get-started/previous-versions/
 
 # 安装conda
 https://www.anaconda.com/download/success#miniconda
