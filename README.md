@@ -56,7 +56,7 @@ python run.py 1
 ### 训练模型
 
 ```bash
-python train.py 1 --IsRender true
+python train.py 1
 ```
 
 ### 查看曲线
