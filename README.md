@@ -95,7 +95,7 @@ tensorboard --logdir=logs/
 1. SuperMarioBros  (超级马里奥)
 2. TeenageMutantNinjaTurtlesTournamentFighters(神龟对打 ps:小时候这么称呼)
 3. FinalMission(SCATSpecialCyberneticAttackTeam)(最终任务 or 空中魂斗罗ps:盗版厂商乱起的名字)
-4. RushnAttack (红色警戒 or 捅刀子的 原因同上2)
+4. RushnAttack (绿色兵团 or 红色警戒 or 捅刀子的 原因同上2)
 
 ### 代码结构，以超级马里奥为例
 超级马里奥目录为SuperMarioBros_PPO
