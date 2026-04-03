@@ -1,0 +1,8 @@
+Logging to /home/ubuntu/workspaces/Nintindo-Nes-Ai-Agent/artifacts/tensorboard/super-mario-bros/PPO_2
+----------------------------
+| time/              |     |
+|    fps             | 449 |
+|    iterations      | 1   |
+|    time_elapsed    | 1   |
+|    total_timesteps | 512 |
+----------------------------

@@ -1,0 +1,4 @@
+model=/home/ubuntu/workspaces/Nintindo-Nes-Ai-Agent/artifacts/models/super-mario-bros/latest.zip
+episodes=1
+average_reward=-28.999999999999957
+rewards=-28.999999999999957
