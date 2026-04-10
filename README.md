@@ -33,20 +33,11 @@ conda activate Nintindo-Nes-Ai-Agent
 
 cd Nintindo-Nes-Ai-Agent
 # 安装 Python 代码库
-python -m pip install --upgrade pip==24.0 -i https://pypi.tuna.tsinghua.edu.cn/simple
-pip install setuptools==65.5.0 wheel==0.38.4 -i https://pypi.tuna.tsinghua.edu.cn/simple
-pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
-# 卸载原有的cpu版本torch
-pip uninstall torch
-# 安装cuda版本torch
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-# 如果下载速度很慢
-# 直接去下载wheel文件 https://download.pytorch.org/whl/cu118/torch-2.4.1%2Bcu118-cp38-cp38-win_amd64.whl
-# pip instlal torch-2.4.1+cu118-cp38-cp38-win_amd64.whl
+python -m pip install --upgrade pip==24.0 
+pip install -r requirements.txt 
 # 安装 ROM / state / data 到 gym-retro
 python -m nes_ai install-roms
 ```
-
 ### 查看训练结果
 
 ```bash
