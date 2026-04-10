@@ -15,24 +15,14 @@
 ## 环境配置(windows linux mac),所有命令一行一行执行
 
 ```bash
-# 安装nvidia驱动
-https://www.nvidia.cn/geforce/drivers/
-# 安装cuda + cuDNN(注意版本对应关系）cuda 使用的是11.8
-https://developer.nvidia.com/cuda-toolkit-archive # cuda 使用的是11.8
-https://developer.nvidia.com/rdp/cudnn-archive
-# 查看pytorch 和 cuda对应的版本
-https://pytorch.org/get-started/previous-versions/
-
-# 安装conda
-https://www.anaconda.com/download/success#miniconda
 # 下载代码
 git clone git@github.com:tiansongyu/Nintindo-Nes-Ai-Agent.git
-# 创建 conda 环境，将其命名为 Nintindo-Nes-Ai-Agent，Python 版本 3.8.10
+
 conda create -n Nintindo-Nes-Ai-Agent python=3.8.10
 conda activate Nintindo-Nes-Ai-Agent
 
 cd Nintindo-Nes-Ai-Agent
-# 安装 Python 代码库
+# 安装 Python 依赖
 python -m pip install --upgrade pip==24.0 
 pip install -r requirements.txt 
 # 安装 ROM / state / data 到 gym-retro
