@@ -7,6 +7,20 @@ from nes_ai.games.base import GameDefinition
 from nes_ai.training.model_store import ModelStore
 
 
+def run_episodes(env, choose_action, episodes: int) -> list[float]:
+    """Run full episodes with ``choose_action(observation)`` and return total rewards."""
+    totals = []
+    for _ in range(episodes):
+        observation = env.reset()
+        done = False
+        total = 0.0
+        while not done:
+            observation, reward, done, _info = env.step(choose_action(observation))
+            total += reward
+        totals.append(total)
+    return totals
+
+
 def play_game(
     game: GameDefinition,
     *,
@@ -21,26 +35,14 @@ def play_game(
     except ModuleNotFoundError as exc:
         raise RuntimeError("stable-baselines3 is required for playback.") from exc
 
-    store = ModelStore.for_game(game)
+    store = ModelStore(game)
     model_path = store.resolve_model_path(model_ref)
     env = create_retro_env(game, state=state, render=render, reset_round=reset_round)
     model = PPO.load(str(model_path), env=env)
 
-    total_rewards = []
-    for _ in range(episodes):
-        observation = env.reset()
-        done = False
-        total_reward = 0.0
-        while not done:
-            action, _states = model.predict(observation)
-            observation, reward, done, info = env.step(action)
-            if reward != 0:
-                total_reward += reward
-        total_rewards.append(total_reward)
-
+    rewards = run_episodes(env, lambda observation: model.predict(observation)[0], episodes)
     env.close()
-    summary_path = _write_evaluation_summary(store.evaluation_dir / "latest_run.txt", model_path, total_rewards)
-    return summary_path
+    return _write_evaluation_summary(store.evaluation_dir / "latest_run.txt", model_path, rewards)
 
 
 def check_reward(
@@ -52,21 +54,12 @@ def check_reward(
     reset_round: bool = True,
 ):
     env = create_retro_env(game, state=state, render=render, reset_round=reset_round)
-    total_rewards = []
-    for _ in range(episodes):
-        observation = env.reset()
-        done = False
-        total_reward = 0.0
-        while not done:
-            observation, reward, done, info = env.step(env.action_space.sample())
-            if reward != 0:
-                total_reward += reward
-        total_rewards.append(total_reward)
-
+    rewards = run_episodes(env, lambda _observation: env.action_space.sample(), episodes)
     env.close()
-    store = ModelStore.for_game(game)
+
+    store = ModelStore(game)
     store.ensure_dirs()
-    return _write_evaluation_summary(store.evaluation_dir / "random_policy.txt", None, total_rewards)
+    return _write_evaluation_summary(store.evaluation_dir / "random_policy.txt", None, rewards)
 
 
 def _write_evaluation_summary(target: Path, model_path: Path | None, rewards: list[float]) -> Path:

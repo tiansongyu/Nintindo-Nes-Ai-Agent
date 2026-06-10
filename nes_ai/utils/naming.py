@@ -1,4 +1,3 @@
-import importlib
 import re
 
 
@@ -19,10 +18,4 @@ def parse_bool(value) -> bool:
     if normalized in {"0", "false", "no", "n", "off"}:
         return False
     raise ValueError(f"Cannot parse boolean value: {value}")
-
-
-def load_attr(path: str):
-    module_name, attr_name = path.split(":", 1)
-    module = importlib.import_module(module_name)
-    return getattr(module, attr_name)
 

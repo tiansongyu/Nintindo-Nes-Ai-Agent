@@ -10,32 +10,37 @@ from nes_ai.games.base import GameDefinition
 
 @dataclass(frozen=True)
 class ModelStore:
-    game: GameDefinition
-    model_dir: Path
-    checkpoints_dir: Path
-    tensorboard_dir: Path
-    evaluation_dir: Path
-    latest_model_path: Path
-    training_log_path: Path
+    """Filesystem layout for one game's models, logs and evaluations."""
 
-    @classmethod
-    def for_game(cls, game: GameDefinition) -> "ModelStore":
-        model_dir = MODELS_DIR / game.slug
-        return cls(
-            game=game,
-            model_dir=model_dir,
-            checkpoints_dir=model_dir / "checkpoints",
-            tensorboard_dir=TENSORBOARD_DIR / game.slug,
-            evaluation_dir=EVALUATIONS_DIR / game.slug,
-            latest_model_path=model_dir / "latest.zip",
-            training_log_path=model_dir / "training.log",
-        )
+    game: GameDefinition
+
+    @property
+    def model_dir(self) -> Path:
+        return MODELS_DIR / self.game.slug
+
+    @property
+    def checkpoints_dir(self) -> Path:
+        return self.model_dir / "checkpoints"
+
+    @property
+    def tensorboard_dir(self) -> Path:
+        return TENSORBOARD_DIR / self.game.slug
+
+    @property
+    def evaluation_dir(self) -> Path:
+        return EVALUATIONS_DIR / self.game.slug
+
+    @property
+    def latest_model_path(self) -> Path:
+        return self.model_dir / "latest.zip"
+
+    @property
+    def training_log_path(self) -> Path:
+        return self.model_dir / "training.log"
 
     def ensure_dirs(self) -> None:
-        self.model_dir.mkdir(parents=True, exist_ok=True)
-        self.checkpoints_dir.mkdir(parents=True, exist_ok=True)
-        self.tensorboard_dir.mkdir(parents=True, exist_ok=True)
-        self.evaluation_dir.mkdir(parents=True, exist_ok=True)
+        for directory in (self.checkpoints_dir, self.tensorboard_dir, self.evaluation_dir):
+            directory.mkdir(parents=True, exist_ok=True)
 
     def resolve_model_path(self, model_ref: str = "latest") -> Path:
         if model_ref in {"latest", ""}:
@@ -46,13 +51,9 @@ class ModelStore:
                 return legacy
             raise FileNotFoundError(f"No model found for {self.game.slug}.")
 
-        candidate = Path(model_ref)
-        if candidate.exists():
-            return candidate
-
-        checkpoint = self.checkpoints_dir / model_ref
-        if checkpoint.exists():
-            return checkpoint
+        for candidate in (Path(model_ref), self.checkpoints_dir / model_ref):
+            if candidate.exists():
+                return candidate
 
         raise FileNotFoundError(f"Unknown model reference '{model_ref}' for {self.game.slug}.")
 
@@ -69,10 +70,7 @@ class ModelStore:
         best_step = -1
         for file_path in LEGACY_MODEL_DIR.glob("*.zip"):
             match = pattern.match(file_path.name)
-            if not match:
-                continue
-            step = int(match.group(1))
-            if step > best_step:
-                best_step = step
+            if match and int(match.group(1)) > best_step:
+                best_step = int(match.group(1))
                 best_match = file_path
         return best_match

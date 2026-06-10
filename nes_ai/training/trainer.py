@@ -42,7 +42,7 @@ def train_game(
     num_envs = num_envs or config.num_envs
     device = _resolve_device(device or config.device)
 
-    store = ModelStore.for_game(game)
+    store = ModelStore(game)
     store.ensure_dirs()
 
     env_factory = [

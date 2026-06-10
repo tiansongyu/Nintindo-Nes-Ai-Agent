@@ -100,7 +100,7 @@ The project now uses one modular package layout:
 
 ```text
 nes_ai/
-  games/        # game registry, default state, training config
+  games/        # game registry (all definitions live in one table in registry.py), training config
   envs/         # shared Retro wrapper base + per-game reward logic
   training/     # PPO training, model loading, evaluation, checkpoints
   retro/        # gym-retro asset installation
@@ -113,14 +113,14 @@ artifacts/      # models, tensorboard logs, evaluation summaries
 Adding a new game now mainly means:
 
 1. Put the new game's `rom.nes`, `rom.sha`, `data.json`, `metadata.json`, `scenario.json`, and `.state` files into `assets/games/<Retro game name>/`
-2. Add one game definition module in `nes_ai/games/`
-3. Add one wrapper module in `nes_ai/envs/` that only contains the reward and done logic for that game
+2. Add one wrapper module in `nes_ai/envs/` that only contains the reward and done logic for that game
+3. Add one `GameDefinition` entry to the `GAMES` table in `nes_ai/games/registry.py` with the slug, default state, and wrapper
 
 This removes the previous need to edit multiple top-level scripts for every new title.
 
 ### Training Parameters
 
-Training still uses PPO. Default hyperparameters now live in the `TrainConfig` attached to each game definition inside `nes_ai/games/*.py`.
+Training still uses PPO. Default hyperparameters live in `TrainConfig` inside `nes_ai/games/base.py`, and each game can override them in the registry.
 ```
     model = PPO(
         "CnnPolicy", 

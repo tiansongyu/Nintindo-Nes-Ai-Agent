@@ -15,97 +15,99 @@ def add_bool_flag(parser: argparse.ArgumentParser, name: str, default: bool, hel
     parser.set_defaults(**{destination: default})
 
 
+def _add_env_options(parser: argparse.ArgumentParser, *, render_default: bool) -> None:
+    parser.add_argument("game", help="Game slug or legacy number.")
+    parser.add_argument("--state", default=None)
+    add_bool_flag(parser, "reset-round", True, "Reset the round when an episode ends.")
+    add_bool_flag(parser, "render", render_default, "Render the game window.")
+
+
+def _run_list_games(args: argparse.Namespace) -> int:
+    for game in list_games():
+        print(f"{game.legacy_number}. {game.slug} -> {game.retro_game}")
+    return 0
+
+
+def _run_install_roms(args: argparse.Namespace) -> int:
+    for path in install_roms(args.game):
+        print(path)
+    return 0
+
+
+def _run_train(args: argparse.Namespace) -> int:
+    train_game(
+        get_game(args.game),
+        total_timesteps=args.timesteps,
+        num_envs=args.num_envs,
+        device=args.device,
+        render=args.render,
+        state=args.state,
+        reset_round=args.reset_round,
+    )
+    return 0
+
+
+def _run_play(args: argparse.Namespace) -> int:
+    summary = play_game(
+        get_game(args.game),
+        model_ref=args.model,
+        episodes=args.episodes,
+        render=args.render,
+        state=args.state,
+        reset_round=args.reset_round,
+    )
+    print(summary)
+    return 0
+
+
+def _run_check_reward(args: argparse.Namespace) -> int:
+    summary = check_reward(
+        get_game(args.game),
+        episodes=args.episodes,
+        render=args.render,
+        state=args.state,
+        reset_round=args.reset_round,
+    )
+    print(summary)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="nes_ai")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    subparsers.add_parser("list-games", help="List all registered games.")
+    list_parser = subparsers.add_parser("list-games", help="List all registered games.")
+    list_parser.set_defaults(func=_run_list_games)
 
     install_parser = subparsers.add_parser("install-roms", help="Install ROM assets into Gym Retro.")
     install_parser.add_argument("game", nargs="?", help="Optional game slug.")
+    install_parser.set_defaults(func=_run_install_roms)
 
     train_parser = subparsers.add_parser("train", help="Train a game agent.")
-    train_parser.add_argument("game", help="Game slug or legacy number.")
+    _add_env_options(train_parser, render_default=False)
     train_parser.add_argument("--timesteps", type=int, default=None)
     train_parser.add_argument("--num-envs", type=int, default=None)
     train_parser.add_argument("--device", default=None)
-    train_parser.add_argument("--state", default=None)
-    add_bool_flag(train_parser, "reset-round", True, "Reset the round when an episode ends.")
-    add_bool_flag(train_parser, "render", False, "Render the game window.")
+    train_parser.set_defaults(func=_run_train)
 
     play_parser = subparsers.add_parser("play", help="Play using a trained model.")
-    play_parser.add_argument("game", help="Game slug or legacy number.")
+    _add_env_options(play_parser, render_default=True)
     play_parser.add_argument("--model", default="latest")
     play_parser.add_argument("--episodes", type=int, default=30)
-    play_parser.add_argument("--state", default=None)
-    add_bool_flag(play_parser, "reset-round", True, "Reset the round when an episode ends.")
-    add_bool_flag(play_parser, "render", True, "Render the game window.")
+    play_parser.set_defaults(func=_run_play)
 
     reward_parser = subparsers.add_parser("check-reward", help="Run a random policy reward sanity check.")
-    reward_parser.add_argument("game", help="Game slug or legacy number.")
+    _add_env_options(reward_parser, render_default=True)
     reward_parser.add_argument("--episodes", type=int, default=30)
-    reward_parser.add_argument("--state", default=None)
-    add_bool_flag(reward_parser, "reset-round", True, "Reset the round when an episode ends.")
-    add_bool_flag(reward_parser, "render", True, "Render the game window.")
+    reward_parser.set_defaults(func=_run_check_reward)
 
     return parser
 
 
 def main(argv=None):
-    parser = build_parser()
-    args = parser.parse_args(argv)
-
+    args = build_parser().parse_args(argv)
     try:
-        if args.command == "list-games":
-            for game in list_games():
-                print(f"{game.legacy_number}. {game.slug} -> {game.retro_game}")
-            return 0
-
-        if args.command == "install-roms":
-            installed = install_roms(args.game)
-            for path in installed:
-                print(path)
-            return 0
-
-        game = get_game(args.game)
-
-        if args.command == "train":
-            train_game(
-                game,
-                total_timesteps=args.timesteps,
-                num_envs=args.num_envs,
-                device=args.device,
-                render=args.render,
-                state=args.state,
-                reset_round=args.reset_round,
-            )
-            return 0
-
-        if args.command == "play":
-            summary = play_game(
-                game,
-                model_ref=args.model,
-                episodes=args.episodes,
-                render=args.render,
-                state=args.state,
-                reset_round=args.reset_round,
-            )
-            print(summary)
-            return 0
-
-        if args.command == "check-reward":
-            summary = check_reward(
-                game,
-                episodes=args.episodes,
-                render=args.render,
-                state=args.state,
-                reset_round=args.reset_round,
-            )
-            print(summary)
-            return 0
+        return args.func(args)
     except (FileNotFoundError, KeyError, RuntimeError, ValueError) as exc:
         sys.stderr.write(f"{exc}\n")
         return 1
-
-    parser.error(f"Unknown command: {args.command}")
-    return 2

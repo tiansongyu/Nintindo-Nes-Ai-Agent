@@ -3,6 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from nes_ai.constants import ASSETS_DIR
+
 
 @dataclass(frozen=True)
 class TrainConfig:
@@ -27,10 +29,13 @@ class GameDefinition:
     display_name: str
     retro_game: str
     default_state: str
-    wrapper_path: str
-    asset_dir: Path
+    wrapper: type
     aliases: tuple[str, ...] = ()
     train_config: TrainConfig = field(default_factory=TrainConfig)
+
+    @property
+    def asset_dir(self) -> Path:
+        return ASSETS_DIR / self.retro_game
 
     def identifiers(self) -> tuple[str, ...]:
         return (

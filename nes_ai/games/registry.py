@@ -1,30 +1,75 @@
+"""Single source of truth for every supported game.
+
+Adding a game means adding one ``GameDefinition`` entry to ``GAMES``.
+"""
+
 from __future__ import annotations
 
+from nes_ai.envs.final_mission import FinalMissionWrapper
+from nes_ai.envs.rush_n_attack import RushNAttackWrapper
+from nes_ai.envs.super_mario_bros import SuperMarioBrosWrapper
+from nes_ai.envs.tmnt_tournament_fighters import TMNTTournamentFightersWrapper
 from nes_ai.games.base import GameDefinition
-from nes_ai.games.final_mission import GAME as FINAL_MISSION
-from nes_ai.games.rush_n_attack import GAME as RUSH_N_ATTACK
-from nes_ai.games.super_mario_bros import GAME as SUPER_MARIO_BROS
-from nes_ai.games.tmnt_tournament_fighters import GAME as TMNT_TOURNAMENT_FIGHTERS
 from nes_ai.utils.naming import normalize_identifier
 
 
-_GAMES = (
-    SUPER_MARIO_BROS,
-    TMNT_TOURNAMENT_FIGHTERS,
-    FINAL_MISSION,
-    RUSH_N_ATTACK,
+GAMES = (
+    GameDefinition(
+        slug="super-mario-bros",
+        legacy_number="1",
+        display_name="Super Mario Bros",
+        retro_game="SuperMarioBros-Nes",
+        default_state="Level1-1",
+        wrapper=SuperMarioBrosWrapper,
+        aliases=("supermariobros", "super_mario_bros"),
+    ),
+    GameDefinition(
+        slug="tmnt-tournament-fighters",
+        legacy_number="2",
+        display_name="Teenage Mutant Ninja Turtles Tournament Fighters",
+        retro_game="TeenageMutantNinjaTurtlesTournamentFighters-Nes",
+        default_state="Level1.LeoVsRaph.Tournament",
+        wrapper=TMNTTournamentFightersWrapper,
+        aliases=(
+            "teenagemutantninjaturtlestournamentfighters",
+            "tmnt",
+            "ninja-turtles",
+        ),
+    ),
+    GameDefinition(
+        slug="final-mission",
+        legacy_number="3",
+        display_name="Final Mission",
+        retro_game="SCATSpecialCyberneticAttackTeam-Nes",
+        default_state="Level1-1",
+        wrapper=FinalMissionWrapper,
+        aliases=("scat", "scat-special-cybernetic-attack-team"),
+    ),
+    GameDefinition(
+        slug="rush-n-attack",
+        legacy_number="4",
+        display_name="Rush'n Attack",
+        retro_game="RushnAttack-Nes",
+        default_state="1Player.Level1",
+        wrapper=RushNAttackWrapper,
+        aliases=("rushnattack", "rush_n_attack"),
+    ),
 )
+
+_BY_IDENTIFIER = {
+    normalize_identifier(identifier): game
+    for game in GAMES
+    for identifier in game.identifiers()
+}
 
 
 def list_games() -> list[GameDefinition]:
-    return list(_GAMES)
+    return list(GAMES)
 
 
 def get_game(identifier: str) -> GameDefinition:
-    normalized = normalize_identifier(identifier)
-    for game in _GAMES:
-        identifiers = {normalize_identifier(value) for value in game.identifiers()}
-        if normalized in identifiers:
-            return game
-    available = ", ".join(game.slug for game in _GAMES)
-    raise KeyError(f"Unknown game '{identifier}'. Available games: {available}")
+    game = _BY_IDENTIFIER.get(normalize_identifier(identifier))
+    if game is None:
+        available = ", ".join(entry.slug for entry in GAMES)
+        raise KeyError(f"Unknown game '{identifier}'. Available games: {available}")
+    return game

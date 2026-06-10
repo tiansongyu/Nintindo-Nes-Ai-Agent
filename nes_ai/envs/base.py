@@ -43,8 +43,7 @@ class BaseRetroWrapper(gym.Wrapper):
         if len(step_result) == 5:
             observation, reward, terminated, truncated, info = step_result
             return observation, reward, terminated or truncated, info
-        observation, reward, done, info = step_result
-        return observation, reward, done, info
+        return step_result
 
     def _stack_observation(self):
         if len(self.frame_stack) < 3:

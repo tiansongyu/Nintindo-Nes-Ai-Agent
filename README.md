@@ -94,7 +94,7 @@ python run.py 1
 
 ```text
 nes_ai/
-  games/        # 游戏注册信息、默认 state、训练配置
+  games/        # 游戏注册表（所有游戏定义集中在 registry.py 一张表里）、训练配置
   envs/         # 通用 Retro wrapper 基类 + 各游戏奖励逻辑
   training/     # PPO 训练、模型加载、评估、checkpoint 管理
   retro/        # gym-retro 资源安装
@@ -107,14 +107,14 @@ artifacts/      # 模型、tensorboard、评估输出
 现在新增一个游戏，主要只需要做三件事：
 
 1. 把该游戏的 `rom.nes`、`rom.sha`、`data.json`、`metadata.json`、`scenario.json` 和 `.state` 文件放到 `assets/games/<Retro游戏名>/`
-2. 在 `nes_ai/games/` 下新增一个游戏定义模块，注册 slug、默认 state、资源目录和训练参数
-3. 在 `nes_ai/envs/` 下新增一个 wrapper，只实现该游戏自己的 reward 和 done 逻辑
+2. 在 `nes_ai/envs/` 下新增一个 wrapper，只实现该游戏自己的 reward 和 done 逻辑
+3. 在 `nes_ai/games/registry.py` 的 `GAMES` 表中加一条 `GameDefinition` 记录，注册 slug、默认 state 和 wrapper
 
 这样就不需要再去同时修改 `common.py`、`train.py`、`run.py`、`set_up.py` 等多个入口。
 
 ### 训练参数
 
-训练仍然使用 PPO，默认参数集中在 `nes_ai/games/*.py` 的 `TrainConfig` 中。典型参数如下：
+训练仍然使用 PPO，默认参数集中在 `nes_ai/games/base.py` 的 `TrainConfig` 中，每个游戏可以在注册表里覆盖自己的配置。典型参数如下：
 ```
     model = PPO(
         "CnnPolicy", 

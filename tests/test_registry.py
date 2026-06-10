@@ -1,6 +1,7 @@
 import unittest
 
 from nes_ai.constants import PROJECT_ROOT
+from nes_ai.envs.base import BaseRetroWrapper
 from nes_ai.games.registry import get_game, list_games
 
 
@@ -20,6 +21,10 @@ class RegistryTests(unittest.TestCase):
                 "rush-n-attack",
             ],
         )
+
+    def test_every_game_uses_a_retro_wrapper(self):
+        for game in list_games():
+            self.assertTrue(issubclass(game.wrapper, BaseRetroWrapper))
 
     def test_project_root_points_to_repository(self):
         self.assertTrue((PROJECT_ROOT / "README.md").exists())
